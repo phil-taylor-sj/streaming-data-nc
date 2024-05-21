@@ -34,8 +34,7 @@ class TestFormattedResponse:
 
 if __name__ == '__main__':
     api_key = os.getenv('GUARDIAN_KEY')
-    print(api_key)
-    search_term = 'coronavirus'
-    date_from = '2020-01-01'
+    search_term = 'football'
+    date_from = '2024-01-01'
     content = get_guardian_content(api_key, search_term, date_from)
     print(content)
