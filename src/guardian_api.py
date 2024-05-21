@@ -35,7 +35,7 @@ def get_guardian_content(
             "webPublicationDate": "2024-04-20T18:19:07Z",
             "webTitle": "â€˜Invinciblesâ€™: unbeaten girlsâ€™ football...",
             "webUrl": "https://www.theguardian.com/football/..."
-            },
+            }
         ]
     '''
     base_url = 'https://content.guardianapis.com/search'
@@ -48,6 +48,7 @@ def get_guardian_content(
         'show-fields': 'webPublicationData,webTitle,webUrl'
     }
     response = requests.get(base_url, params=params)
+    print(response)
     if response.status_code != 200:
         response.raise_for_status()
     return response.json()
@@ -66,7 +67,7 @@ def filter_response(
             list contiaining names of fields to be kept.
 
     Returns:
-        list of dictionaries containing only the fields specified in the
+        list of dictionaries containing only the entries specified in the
         fields argument. If the response is empty, an empty list is returned.
     '''
     if not response:

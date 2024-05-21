@@ -1,10 +1,27 @@
 from src.guardian_api import get_guardian_content, filter_response
+from unittest.mock import patch, MagicMock
+import requests
 import pytest
 import json
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
+
+
+class TestGetGuardianContent():
+
+    @patch("src.guardian_api.requests.get")
+    def test_raises_401_exception_for_invalid_key(self, mock_get):
+        mock_response = MagicMock()
+        mock_response.status_code = 401
+        mock_get.return_value = mock_response
+        mock_response.raise_for_status.side_effect = \
+            requests.exceptions.HTTPError
+
+        with pytest.raises(requests.exceptions.HTTPError):
+            api_key = os.getenv('GUARDIAN_KEY')
+            get_guardian_content(api_key, 'football', '2024-01-01')
 
 
 class TestFormattedResponse:
@@ -37,4 +54,4 @@ if __name__ == '__main__':
     search_term = 'football'
     date_from = '2024-01-01'
     content = get_guardian_content(api_key, search_term, date_from)
-    print(content)
+    # print(content)
