@@ -2,7 +2,7 @@ from moto import mock_aws
 import pytest
 import boto3
 import os
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, ParamValidationError
 from src.connections_aws import connections_aws
 
 
@@ -41,3 +41,11 @@ class TestGetGuardianCredentials:
             + 'when calling the GetSecretValue operation: '
             + 'The security token included in the request is invalid.'
         )
+
+    def test_raises_error_if_secret_id_type_invalid(mock_credentials):
+        with pytest.raises(ParamValidationError) as excinfo:
+            connections_aws.get_credentials(14)
+        assert str(excinfo.value).find(
+            'Parameter validation failed:\n' +
+            'Invalid type for parameter SecretId,'
+        ) >= 0
