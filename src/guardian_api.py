@@ -45,6 +45,7 @@ def get_guardian_content(
         'from-date': date_from,
         'page': 1,
         'page-size': 10,
+        'order-by': 'newest',
         'show-fields': 'webPublicationData,webTitle,webUrl'
     }
     response = requests.get(base_url, params=params)

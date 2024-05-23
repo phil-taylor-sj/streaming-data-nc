@@ -54,4 +54,6 @@ if __name__ == '__main__':
     search_term = 'football'
     date_from = '2024-01-01'
     content = get_guardian_content(api_key, search_term, date_from)
-    # print(content)
+    results = filter_response(content)
+    for result in results:
+        print(result)
