@@ -23,3 +23,11 @@ class connections_aws:
         conn = boto3.client('secretsmanager', region_name=cls._current_region)
         response = conn.get_secret_value(SecretId=secret_id)
         return response['SecretString']
+
+    @classmethod
+    def get_message_broker(cls):
+        '''
+        Returns:
+            Kinesis client object.
+        '''
+        return boto3.client('kinesis', region_name=cls._current_region)

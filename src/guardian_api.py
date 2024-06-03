@@ -27,13 +27,13 @@ def get_guardian_content(
 
         [
             {
-                "webPublicationDate": "2024-04-19T09:50:43Z",
-                "webTitle": "Rescuers deflate football-sized...",
+                "webPublicationDate": "2024-01-01T00:00:00Z",
+                "webTitle": "Title 1",
                 "webUrl": "https://www.theguardian.com/uk-news/..."
             },
             {
-            "webPublicationDate": "2024-04-20T18:19:07Z",
-            "webTitle": "â€˜Invinciblesâ€™: unbeaten girlsâ€™ football...",
+            "webPublicationDate": "2024-02-02T00:00:00Z",
+            "webTitle": "Title 2",
             "webUrl": "https://www.theguardian.com/football/..."
             }
         ]
