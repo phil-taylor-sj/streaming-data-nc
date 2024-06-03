@@ -41,28 +41,33 @@ class TestAddRecords:
             './tests/data/api_content_2/formatted_results.json')
             )['results']
 
-    def test_adds_records_to_stream(self, mock_broker):
-        stream_name = 'test-stream'
-        create_stream(mock_broker, stream_name)
-        add_records(mock_broker, stream_name, 'test-term', self.test_records)
-
-        # Assert
+    def _read_broker(kinesis, stream_name):
         output = []
-        response = mock_broker.describe_stream(StreamName=stream_name)
+        response = kinesis.describe_stream(StreamName=stream_name)
         for shard in response['StreamDescription']['Shards']:
             shard_id = shard['ShardId']
-            shard_iterator_response = mock_broker.get_shard_iterator(
+            shard_iterator_response = kinesis.get_shard_iterator(
                 StreamName=stream_name,
                 ShardId=shard_id,
                 ShardIteratorType='TRIM_HORIZON',
             )
             shard_iterator = shard_iterator_response['ShardIterator']
-            record_response = mock_broker.get_records(
+            record_response = kinesis.get_records(
                 ShardIterator=shard_iterator, Limit=15)
             for record in record_response['Records']:
                 output.append(json.loads(record['Data'].decode('utf-8')))
+        return output
 
-        for i in range(len(output)):
+    def test_adds_all_records_to_stream(self, mock_broker):
+        stream_name = 'test-stream'
+        create_stream(mock_broker, stream_name)
+        add_records(mock_broker, stream_name, 'test-term', self.test_records)
+
+        # Assert
+        output = self.__class__._read_broker(mock_broker, stream_name)
+        assert len(output) == len(self.test_records)
+
+        for i in range(len(self.test_records)):
             expect = self.test_records[i]
             for key in expect.keys():
-                assert expect[key] == output[i][key]
+                assert output[i][key] == expect[key]
