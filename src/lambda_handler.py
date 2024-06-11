@@ -24,13 +24,15 @@ def lambda_handler(event: dict, context: dict):
         param_name = re.findall(r'\(\w+\)', str(err))[0]
         logger.error(f'Invalid input parameter type {param_name}.')
     except ValueError as err:
-        if re.search(
-            r'Parameter \(\w+\) cannot be an empty string\.', str(err)
-                ) is not None:
-            param_name = re.findall(r'\(\w+\)', str(err))[0]
-            logger.error(f'Empty input parameter {param_name}.')
-        if re.search(
-            r'Parameter \(\w+\) cannot contain only whitespace\.', str(err)
-                ) is not None:
-            param_name = re.findall(r'\(\w+\)', str(err))[0]
-            logger.error(f'Invalid input parameter {param_name}.')
+        log_responses = {
+            'cannot be an empty string': 'Empty input parameter',
+            'cannot contain only whitespace': 'Invalid input parameter',
+            'must be formatted as': 'Invalid date format',
+            'must be before current date': 'Invalid date value'
+        }
+        for message in log_responses.keys():
+            if re.search(
+                rf'Parameter \(\w+\) {message}', str(err)
+                    ) is not None:
+                param_name = re.findall(r'\(\w+\)', str(err))[0]
+                logger.error(f'{log_responses[message]} {param_name}.')
