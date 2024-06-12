@@ -8,6 +8,7 @@ from botocore.exceptions import ClientError
 from moto import mock_aws
 from unittest.mock import patch
 import json
+import responses
 
 load_dotenv()
 
@@ -125,6 +126,12 @@ class TestInputValidation:
 
 class TestNewStreamCreation:
 
+    _test_event = {
+        'date_from': '2022-01-01',
+        'search_term': 'test_term',
+        'stream_id': 'test_stream'
+    }
+
     def _read_broker(kinesis, stream_name):
         output = []
         response = kinesis.describe_stream(StreamName=stream_name)
@@ -215,7 +222,20 @@ class TestNewStreamCreation:
         }
         with caplog.at_level(logging.INFO):
             lambda_handler(event, None)
-            expected = ('Failed to retrieve Guardian API key ' + 
+            expected = ('Failed to retrieve Guardian API key ' +
                         'from AWS Secrets Manager.')
             assert expected in caplog.text
 
+    @responses.activate
+    @patch('src.lambda_handler.connections_aws.get_credentials',
+           return_value='1234567890')
+    def test_guardian_raises_http_error(
+            self, mock_credentials, caplog):
+        responses.add(responses.GET,
+                      'https://content.guardianapis.com/search',
+                      json={'error': 'Unauthorized'},
+                      status=401)
+        with caplog.at_level(logging.INFO):
+            lambda_handler(self._test_event, None)
+            expected = 'Guardian API request failed with status code 401.'
+            assert expected in caplog.text
