@@ -4,6 +4,7 @@ import os
 from src.lambda_handler import lambda_handler
 from dotenv import load_dotenv
 import boto3
+from botocore.exceptions import ClientError
 from moto import mock_aws
 from unittest.mock import patch
 import json
@@ -203,3 +204,18 @@ class TestNewStreamCreation:
             assert expected in caplog.text
         output = self.__class__._read_broker(mock_broker, stream_name)
         assert output == []
+
+    def test_logs_error_if_credentials_not_found(
+            self, mock_credentials, caplog):
+        stream_name = 'test_stream'
+        event = {
+            'date_from': '2022-01-01',
+            'search_term': 'test_term',
+            'stream_id': stream_name
+        }
+        with caplog.at_level(logging.INFO):
+            lambda_handler(event, None)
+            expected = ('Failed to retrieve Guardian API key ' + 
+                        'from AWS Secrets Manager.')
+            assert expected in caplog.text
+
