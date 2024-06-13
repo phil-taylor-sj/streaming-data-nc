@@ -49,7 +49,6 @@ def get_guardian_content(
         'show-fields': 'webPublicationData,webTitle,webUrl'
     }
     response = requests.get(base_url, params=params)
-    print(response)
     if response.status_code != 200:
         response.raise_for_status()
     return response.json()

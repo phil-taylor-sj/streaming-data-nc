@@ -18,7 +18,6 @@ def create_stream(kinesis, stream_name: str):
             ShardCount=151
         )
     except kinesis.exceptions.ResourceInUseException:
-        print('Adding data to existing stream.')
         return None
     return response
 
