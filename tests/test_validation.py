@@ -12,9 +12,10 @@ class TestcCheckDateIsValid():
         Verify does not raise errors for properly formatted and valid
         date values.
 
-        This test confirms that the function properly validates date strings
-        that meet the expected criteria (non-empty and properly formatted).
-        The function should return 'True' for all valid cases.
+        This test confirms that the function 'check_date_is_valid' properly
+        validates date strings that meet the expected criteria (non-empty
+        and properly formatted). The function should return 'True' for
+        all valid cases.
 
         Valid values Tested:
             - '2024-01-01'
@@ -29,6 +30,9 @@ class TestcCheckDateIsValid():
     def test_raises_error_for_none_string_value(self, param):
         '''
         Verify raises TypeError for non-string date values.
+
+        Tests that the function 'check_date_is_valid' raises a TypeError
+        when provided with input types other than string.
 
         Invalid types Tested:
             - 14 (integer)
@@ -46,7 +50,10 @@ class TestcCheckDateIsValid():
     def test_raises_error_for_invalid_date_format(self, param):
         '''
         Verify raises ValueError for improperly formatted date values.
-        
+
+        Tests that the function 'check_date_is_valid' raises a ValueError
+        when provided with date strings that are not formatted as %Y-%m-%d.
+
         Invalid values tested:
             - 'Hello World'
             - '0000-00-00'
@@ -62,12 +69,12 @@ class TestcCheckDateIsValid():
         '''
         Verify raises ValueError for invalid dates values.
 
-        This test checks that the function raises a ValueError when provided
-        a date which is properly formatted, with valid days and months, but
-        occurs after the current date.
+        Tests that the function 'ccheck_date_is_valid' raises a ValueError
+        when provided a date which is properly formatted, with valid days
+        and months, but occurs after the current date.
 
         Invalid values tested:
-            - '3020-01-01' 
+            - '3020-01-01'
         '''
         with pytest.raises(ValueError) as exec:
             check_date_is_valid('3020-01-01')
@@ -80,9 +87,9 @@ class TestcCheckDateIsValid():
         '''
         Verify raises ValueError for invalid month or day values.
 
-        This test checks that the function raises a ValueError when provided
-        provided a date string which is properly formatted, but contains an
-        invalid month or day.
+        Tests that the function 'check_date_is_valid' raises a ValueError
+        when provided with a date string which is properly formatted,
+        but contains an invalid month or day.
         '''
         with pytest.raises(ValueError) as exec:
             check_date_is_valid(param)
@@ -94,12 +101,12 @@ class TestCheckIdStringIsValid:
 
     def test_returns_true_for_valid_id(self):
         '''
-        Verify correct ID strings are accepted by
-        'check_id_string_is_valid'.
+        Verify does not raise errors for valid id strings.
 
-        This test confirms that the function properly validates ID strings
-        that meet the expected criteria (non-empty and properly formatted).
-        The function should return 'True' for all valid cases.
+        Tests that the function 'check_id_string_is_valid'
+        properly validates ID strings that meet the expected criteria
+        (non-empty and properly formatted). The function should return
+        'True' for all valid cases.
 
         Valid IDs Tested:
             - 'Hello World'
@@ -113,17 +120,19 @@ class TestCheckIdStringIsValid:
     @pytest.mark.parametrize('param', [14, []])
     def test_raises_error_for_invalid_type(self, param):
         '''
-        Ensure that non-string ID inputs raise TypeError in `check_id_string_is_valid`.
+        Verify that raises TypeError for non-string ID inputs.
 
-        This test checks that the function enforces type constraints by raising a TypeError
-        when provided with input types other than string, ensuring robust input validation.
+        Tests that the function 'check_id_string_is_valid' enforces type
+        constraints by raising a TypeError when provided with input types
+        other than string.
 
         Non-string Inputs Tested:
             - 14 (integer)
             - [] (empty list)
 
         Expected Exception:
-            TypeError with a message specifying that the parameter must be a string.
+            TypeError:
+                - 'Parameter (test_id) must be of type string.'
         '''
         with pytest.raises(TypeError) as exec:
             check_id_string_is_valid(param, 'test_id')
@@ -133,17 +142,20 @@ class TestCheckIdStringIsValid:
 
     def test_raises_error_for_empty_id_string(self):
         '''
-        Confirm that empty or whitespace-only strings raise ValueError in `check_id_string_is_valid`.
+        Verify raises ValueError for empty or whitespace-only string.
 
-        This test verifies that the function identifies and rejects empty strings and strings
-        composed solely of whitespace as invalid IDs, aiming to prevent data integrity issues.
+        Tests that the function 'check_id_string_is_valid' identifies
+        and rejects a stream_id that is either empty or
+        composed solely of whitespace .
 
         Scenarios Tested:
             - '' (empty string)
             - '   ' (whitespace only)
 
         Expected Exception:
-            ValueError with messages explaining that the ID string cannot be empty or only whitespace.
+            ValueError:
+                - 'Parameter (test_id) cannot be an empty string.'
+                - 'Parameter (test_id) cannot contain only whitespace.'
         '''
         with pytest.raises(ValueError) as exec:
             check_id_string_is_valid('', 'test_id')
