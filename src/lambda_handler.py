@@ -1,12 +1,12 @@
-import boto3
 import logging
 import re
 from botocore.exceptions import ClientError
+from requests import HTTPError
 from src.message_broker import create_stream, add_records
 from src.guardian_api import get_guardian_content, filter_response
 from src.validation import check_date_is_valid, check_id_string_is_valid
 from src.connections_aws import connections_aws
-from requests import HTTPError
+
 
 logger = logging.getLogger("GuardianLogger")
 logger.setLevel(logging.INFO)
@@ -14,8 +14,8 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event: dict, context: dict):
     '''
-    AWS Lambda handler to process Guardian API content and push results
-    to Kinesis stream.
+    AWS Lambda handler to process Guardian API content and uploading
+    results to a message broker to Kinesis stream.
 
     Parameters:
     event (dict): Event data passed to the function, containing:
@@ -43,7 +43,7 @@ def lambda_handler(event: dict, context: dict):
     9. Adds the filtered results to the Kinesis stream.
     10. Logs the number of records added to the stream.
 
-    Exception Handling:
+    Logs (Error):
     - TypeError: Logs an error if an input parameter has an invalid type,
         extracting the parameter name from the error message.
     - ValueError: Logs specific error messages based on the nature of the
@@ -70,6 +70,8 @@ def lambda_handler(event: dict, context: dict):
         api_key = connections.get_credentials('Guardian-Key')
         response = get_guardian_content(api_key, search_term, date_from)
         results = filter_response(response)
+        for record in results:
+            record['keyword'] = search_term
         kinesis = connections.get_message_broker()
         if (create_stream(kinesis, stream_id) is not None):
             logger.info(f'New stream created: {stream_id}.')
