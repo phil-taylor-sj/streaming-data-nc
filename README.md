@@ -65,15 +65,11 @@ Up to 10 records will be uploaded in the following format
 
 3. Store the key in a .env file within the project directory (variable name: GUARDIAN_KEY).
 
-4. Build the virtual environment with the Makefile
-    ```
-    make create-environment
-    ```
-    or build manually
+4. Build the virtual environment and install the required dependencies.
     ```
     python -m venv venv
     source venv/bin/activate
-    pip install -r requirements.txt
+    make requirements
     ```
 
 ## Setup (Amazon Web Services)
