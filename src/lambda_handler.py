@@ -58,7 +58,7 @@ def lambda_handler(event: dict, context: dict):
     - Logs the number of records added to the Kinesis stream.
     '''
 
-    date_from = event.get('date_from')
+    date_from = event.get('date_from', '1950-01-01')
     search_term = event.get('search_term')
     stream_id = event.get('stream_id')
 
@@ -75,8 +75,9 @@ def lambda_handler(event: dict, context: dict):
         kinesis = connections.get_message_broker()
         if (create_stream(kinesis, stream_id) is not None):
             logger.info(f'New stream created: {stream_id}.')
-        add_records(kinesis, stream_id, search_term, results)
-        logger.info(f'{len(results)} records added to stream: {stream_id}.')
+        shard_id = add_records(kinesis, stream_id, search_term, results)
+        logger.info(f'{len(results)} records added to stream: ' + 
+        f'{stream_id} ({shard_id[-3:]}).')
     except TypeError as err:
         param_name = re.findall(r'\(\w+\)', str(err))[0]
         logger.error(f'Invalid input parameter type {param_name}.')
