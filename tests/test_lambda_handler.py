@@ -252,7 +252,7 @@ class TestDataProcessing:
             mock_credentials,
             mock_content,
             mock_kinesis,
-            mock_broker):
+            mock_broker, caplog):
         '''
         Test that records are correctly uploaded to a Kinesis stream.
 
@@ -283,7 +283,10 @@ class TestDataProcessing:
             'search_term': 'test_term',
             'stream_id': stream_name
         }
-        lambda_handler(event, None)
+        with caplog.at_level(logging.INFO):
+            lambda_handler(event, None)
+            expected = f'10 records added to stream: {stream_name}'
+            assert expected in caplog.text
 
         output = self.__class__._read_broker(mock_broker, stream_name)
         assert len(output) == 10
@@ -334,7 +337,7 @@ class TestDataProcessing:
 
         with caplog.at_level(logging.INFO):
             lambda_handler(event, None)
-            expected = f'0 records added to stream: {stream_name}.'
+            expected = f'0 records added to stream: {stream_name}'
             assert expected in caplog.text
         output = self.__class__._read_broker(mock_broker, stream_name)
         assert output == []

@@ -4,7 +4,7 @@ import requests
 def get_guardian_content(
         api_key: str, search_term: str, date_from: str
 ) -> list[dict]:
-    '''Get content from the Guardian API.
+    '''Retrieve article data from the Guardian content API.
 
     Submits a request to the Guardian API to get content based on the
     search and returns a list of 10 dictionaries containing the only
