@@ -108,8 +108,12 @@ def lambda_handler(event: dict, context: dict):
             case 'AccessDeniedException':
                 log_responses = {
                     'PutRecord': 'Insufficient permissions to add ' +
-                    'records to stream: {stream_id}.'
+                    'records to stream: {stream_id}.',
+                    'GetSecretValue': 'Insufficient permissions to ' +
+                    'retrieve secret.'
                 }
         for message in log_responses.keys():
             if re.search(rf'{message}', str(err)) is not None:
                 logger.error(log_responses[message])
+    except Exception as err:
+        logger.error(f'An unexpected error occurred: {str(err)}.')
